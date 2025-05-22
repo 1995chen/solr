@@ -1079,7 +1079,10 @@ public class DirectUpdateHandler2 extends UpdateHandler
       Iterable<Document> nestedDocs = cmd.makeLuceneDocs();
       Term idTerm = getIdTerm(cmd.getIndexedId());
       Term updateTerm = hasUpdateTerm ? cmd.updateTerm : idTerm;
-
+      // buck insert delete by id
+      if (cmd.req.getParams().getBool("buck_insert_nest")) {
+        updateTerm = new Term(idField.getName(), cmd.req.getSchema().indexableUniqueKey(cmd.getSelfOrNestedDocIdStr()));
+      }
       log.debug("updateDocuments({})", cmd);
       writer.updateDocuments(updateTerm, nestedDocs);
 
